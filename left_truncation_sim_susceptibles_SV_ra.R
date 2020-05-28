@@ -160,134 +160,145 @@ surv_m <- read.csv("/Users/danagoin/Documents/Research projects/Left truncation 
 
 
 p1 <-   ggplot(surv_m) + 
-  geom_line(aes(x=s_e, y=cf_rd, linetype="Counterfactual")) + 
-  geom_line(aes(x=s_e, y=trunc_rd, linetype="Truncated")) + 
+  geom_line(aes(x=s_e, y=cf_rd, linetype="Counterfactual"), size=1.5) + 
+  geom_line(aes(x=s_e, y=trunc_rd, linetype="Truncated"), size=1.5) + 
   theme_bw() + 
   facet_wrap(~lb_e, labeller = labeller(lb_e = c("-0.05" ="Lengthen gestation time", "0" ="No effect on gestation time", "0.05"="Shorten gestation time"))) + 
   labs(title="Effect of exposure on \n time to live birth", 
        x="Effect of exposure on \n probability of spontaneous abortion",  
-       y="PTB risk difference") +
-  theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(size=14), 
-        axis.title.x=element_text(size=14),
-        axis.text.y = element_text(size=14), axis.title.y= element_text(size=14), 
-        strip.text.x = element_text(size = 14), 
-        legend.text = element_text(size=14)) +
-  scale_linetype_manual("", breaks = c("Counterfactual", "Truncated"), values=c(1,2)) + 
-
+       y="Preterm birth risk difference") +
+  theme(plot.title = element_text(hjust = 0.5, size=18), axis.text.x = element_text(size=16), 
+        axis.title.x=element_text(size=18),
+        axis.text.y = element_text(size=16), axis.title.y= element_text(size=18), 
+        strip.text.x = element_text(size = 18), 
+        legend.text = element_text(size=16)) +
+  scale_linetype_manual("", breaks = c("Counterfactual", "Truncated"), values=c(6,5)) + 
+  scale_fill_manual("", labels = c("Counterfactual", "Truncated"), values=c("#636363","#bdbdbd")) +
   geom_ribbon(aes(x = s_e, ymin=cf_rd - 1.96*cf_rd_SE, ymax=cf_rd + 1.96*cf_rd_SE), alpha=0.2) + 
   geom_ribbon(aes(x = s_e, ymin=trunc_rd - 1.96*trunc_rd_SE, ymax=trunc_rd + 1.96*trunc_rd_SE), alpha=0.2) + 
   
-  geom_hline(yintercept=0, linetype=3) + ylim(-0.012, 0.012)
+  geom_hline(yintercept=0, linetype=3) + 
+  scale_y_continuous("Preterm birth risk difference per 100 women",  labels=function(x) sprintf("%.1f", x*100), limits=c(-0.012, 0.012)) 
 
+p1
 ggsave(p1, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_susceptible_SV_ra_1000.pdf"), width=15)
 
 p1a <-   ggplot(surv_m %>% filter(lb_e==0.05)) + 
-  geom_line(aes(x=s_e, y=cf_rd, linetype="Counterfactual")) + 
-  geom_line(aes(x=s_e, y=trunc_rd, linetype="Truncated")) + 
+  geom_line(aes(x=s_e, y=cf_rd, linetype="Counterfactual"), size=1.5) + 
+  geom_line(aes(x=s_e, y=trunc_rd, linetype="Truncated"), size=1.5) + 
   theme_bw() + 
   labs(x="Effect of exposure on \n probability of spontaneous abortion",  
-       y="PTB risk difference") +
-  theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(size=14), 
-        axis.title.x=element_text(size=14),
-        axis.text.y = element_text(size=14), axis.title.y= element_text(size=14), 
-        strip.text.x = element_text(size = 14), 
-        legend.text = element_text(size=14)) + 
+       y="Preterm birth risk difference") +
+  theme(plot.title = element_text(hjust = 0.5, size=18), axis.text.x = element_text(size=16), 
+        axis.title.x=element_text(size=18),
+        axis.text.y = element_text(size=16), axis.title.y= element_text(size=18), 
+        strip.text.x = element_text(size = 18), 
+        legend.text = element_text(size=16)) + 
   scale_linetype_manual("", breaks = c("Counterfactual", "Truncated"), values=c(6,5)) + 
+  scale_fill_manual("", labels = c("Counterfactual", "Truncated"), values=c("#1a9850","#4575b4")) +
   
   geom_ribbon(aes(x = s_e, ymin=cf_rd - 1.96*cf_rd_SE, ymax=cf_rd + 1.96*cf_rd_SE), alpha=0.2) + 
   geom_ribbon(aes(x = s_e, ymin=trunc_rd - 1.96*trunc_rd_SE, ymax=trunc_rd + 1.96*trunc_rd_SE), alpha=0.2) + 
   
-  geom_hline(yintercept=0, linetype=3) + ylim(-0.012, 0.012)
+  geom_hline(yintercept=0, linetype=3) + 
+  scale_y_continuous("Preterm birth risk difference per 100 women",  labels=function(x) sprintf("%.1f", x*100), limits=c(-0.012, 0.012)) 
 
-ggsave(p1a, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_susceptible_SV_ra_1000_lb05.pdf"), width=10)
+p1a
+ggsave(p1a, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_susceptible_SV1_ra_1000_lb05.pdf"), width=10)
 
 
 p2 <- ggplot(surv_m) + 
-  geom_line(aes(x=s_e, y=cf_rd_SV0, linetype="Counterfactual")) + 
-  geom_line(aes(x=s_e, y=trunc_rd_SV0, linetype="Truncated")) + 
+  geom_line(aes(x=s_e, y=cf_rd_SV0, linetype="Counterfactual"), size=1.5) + 
+  geom_line(aes(x=s_e, y=trunc_rd_SV0, linetype="Truncated"), size=1.5) + 
   theme_bw() + 
   facet_wrap(~lb_e, labeller = labeller(lb_e = c("-0.05" ="Lengthen gestation time", "0" ="No effect on gestation time", "0.05"="Shorten gestation time"))) + 
   labs(title="Effect of exposure on \n time to live birth", 
-       x="Effect of exposure on \n probability of spontaneous abortion",  
-       y="PTB risk difference") +
-  theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(size=14), 
-        axis.title.x=element_text(size=14),
-        axis.text.y = element_text(size=14), axis.title.y= element_text(size=14), 
-        strip.text.x = element_text(size = 14), 
-        legend.text = element_text(size=14)) + 
-  scale_linetype_manual("", breaks = c("Counterfactual", "Truncated"), values=c(1,2)) + 
+       x="Effect of exposure on \n probability of spontaneous abortion") +
+  theme(plot.title = element_text(hjust = 0.5, size=18), axis.text.x = element_text(size=16), 
+        axis.title.x=element_text(size=18),
+        axis.text.y = element_text(size=16), axis.title.y= element_text(size=18), 
+        strip.text.x = element_text(size = 18), 
+        legend.text = element_text(size=16)) + 
+  scale_linetype_manual("", breaks = c("Counterfactual", "Truncated"), values=c(6,5)) + 
+  scale_fill_manual("", labels = c("Counterfactual", "Truncated"), values=c("#1a9850","#4575b4")) +
   
   geom_ribbon(aes(x = s_e, ymin=cf_rd_SV0 - 1.96*cf_rd_SE_SV0, ymax=cf_rd_SV0 + 1.96*cf_rd_SE_SV0), alpha=0.2) + 
   geom_ribbon(aes(x = s_e, ymin=trunc_rd_SV0 - 1.96*trunc_rd_SE_SV0, ymax=trunc_rd_SV0 + 1.96*trunc_rd_SE_SV0), alpha=0.2) + 
   
-  geom_hline(yintercept=0, linetype=3) + ylim(-0.012, 0.012)
+  geom_hline(yintercept=0, linetype=3) + 
+  scale_y_continuous("Preterm birth risk difference per 100 women",  labels=function(x) sprintf("%.1f", x*100), limits=c(-0.012, 0.012)) 
 
+p2
 ggsave(p2, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_susceptible_SV0_ra_1000.pdf"), width=15)
 
 
 p2a <- ggplot(surv_m %>% filter(lb_e==0.05)) + 
-  geom_line(aes(x=s_e, y=cf_rd_SV0, linetype="Counterfactual")) + 
-  geom_line(aes(x=s_e, y=trunc_rd_SV0, linetype="Truncated")) + 
+  geom_line(aes(x=s_e, y=cf_rd_SV0, linetype="Counterfactual"), size=1.5) + 
+  geom_line(aes(x=s_e, y=trunc_rd_SV0, linetype="Truncated"), size=1.5) + 
   theme_bw() + 
-  labs(title="No social vulnerability", x="Effect of exposure on \n probability of spontaneous abortion",  
-       y="PTB risk difference") +
-  theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(size=14), 
-        axis.title.x=element_text(size=14),
-        axis.text.y = element_text(size=14), axis.title.y= element_text(size=14), 
-        strip.text.x = element_text(size = 14), 
-        legend.text = element_text(size=14), 
+  labs(title="Without social vulnerability", x="Effect of exposure on \n probability of spontaneous abortion") +
+  theme(plot.title = element_text(hjust = 0.5, size=18), axis.text.x = element_text(size=16), 
+        axis.title.x=element_text(size=18),
+        axis.text.y = element_text(size=16), axis.title.y= element_text(size=18), 
+        strip.text.x = element_text(size = 18), 
+        legend.text = element_text(size=16), 
         plot.margin = unit(c(1,1.5,1,1.5), "cm")) + 
-  scale_linetype_manual("", breaks = c("Counterfactual", "Truncated"), values=c(1,2)) + 
+  scale_linetype_manual("", breaks = c("Counterfactual", "Truncated"), values=c(6,5)) + 
+  scale_fill_manual("", labels = c("Counterfactual", "Truncated"), values=c("#1a9850","#4575b4")) +
   
   geom_ribbon(aes(x = s_e, ymin=cf_rd_SV0 - 1.96*cf_rd_SE_SV0, ymax=cf_rd_SV0 + 1.96*cf_rd_SE_SV0), alpha=0.2) + 
   geom_ribbon(aes(x = s_e, ymin=trunc_rd_SV0 - 1.96*trunc_rd_SE_SV0, ymax=trunc_rd_SV0 + 1.96*trunc_rd_SE_SV0), alpha=0.2) +
-  ylim(-0.012, 0.012) + guides(linetype=FALSE)
-  
+   guides(linetype=FALSE) + 
+  scale_y_continuous("Preterm birth risk difference per 100 women",  labels=function(x) sprintf("%.1f", x*100), limits=c(-0.012, 0.012)) 
+
+p2a  
 ggsave(p2a, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_susceptible_SV0_ra_1000_lb05.pdf"), width=10)
 
 
 p3 <- ggplot(surv_m) + 
-  geom_line(aes(x=s_e, y=cf_rd_SV1, linetype="Counterfactual")) + 
-  geom_line(aes(x=s_e, y=trunc_rd_SV1, linetype="Truncated")) + 
+  geom_line(aes(x=s_e, y=cf_rd_SV1, linetype="Counterfactual"), size=1.5) + 
+  geom_line(aes(x=s_e, y=trunc_rd_SV1, linetype="Truncated"), size=1.5) + 
   theme_bw() + 
   facet_wrap(~lb_e, labeller = labeller(lb_e = c("-0.05" ="Lengthen gestation time", "0" ="No effect on gestation time", "0.05"="Shorten gestation time"))) + 
   labs(title="Effect of exposure on \n time to live birth", 
-       x="Effect of exposure on \n probability of spontaneous abortion",  
-       y="PTB risk difference") +
-  theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(size=14), 
-        axis.title.x=element_text(size=14),
-        axis.text.y = element_text(size=14), axis.title.y= element_text(size=14), 
-        strip.text.x = element_text(size = 14), 
-        legend.text = element_text(size=14)) + 
+       x="Effect of exposure on \n probability of spontaneous abortion") +
+  theme(plot.title = element_text(hjust = 0.5, size=18), axis.text.x = element_text(size=16), 
+        axis.title.x=element_text(size=18),
+        axis.text.y = element_text(size=16), axis.title.y= element_text(size=18), 
+        strip.text.x = element_text(size = 18), 
+        legend.text = element_text(size=16)) + 
   scale_linetype_manual("", breaks = c("Counterfactual", "Truncated"), values=c(1,2)) + 
   
   geom_ribbon(aes(x = s_e, ymin=cf_rd_SV1 - 1.96*cf_rd_SE_SV1, ymax=cf_rd_SV1 + 1.96*cf_rd_SE_SV1), alpha=0.2) + 
   geom_ribbon(aes(x = s_e, ymin=trunc_rd_SV1 - 1.96*trunc_rd_SE_SV1, ymax=trunc_rd_SV1 + 1.96*trunc_rd_SE_SV1), alpha=0.2) + 
   
-  geom_hline(yintercept=0, linetype=3) + ylim(-0.012, 0.012)
+  geom_hline(yintercept=0, linetype=3) + 
+  scale_y_continuous("Preterm birth risk difference per 100 women",  labels=function(x) sprintf("%.1f", x*100), limits=c(-0.012, 0.012)) 
 
 
+p3
 ggsave(p3, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_susceptible_SV1_ra_1000.pdf"), width=10)
 
 
 p3a <- ggplot(surv_m %>% filter(lb_e == 0.05)) + 
-  geom_line(aes(x=s_e, y=cf_rd_SV1, linetype="Counterfactual")) + 
-  geom_line(aes(x=s_e, y=trunc_rd_SV1, linetype="Truncated")) + 
+  geom_line(aes(x=s_e, y=cf_rd_SV1, linetype="Counterfactual"), size=1.5) + 
+  geom_line(aes(x=s_e, y=trunc_rd_SV1, linetype="Truncated"), size=1.5) + 
   theme_bw() + 
-  labs(title="Social vulnerability", x="Effect of exposure on \n probability of spontaneous abortion",  
-       y="PTB risk difference") +
-  theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(size=14), 
-        axis.title.x=element_text(size=14),
-        axis.text.y = element_text(size=14), axis.title.y= element_text(size=14), 
-        strip.text.x = element_text(size = 14), 
-        legend.text = element_text(size=14), plot.margin = unit(c(1,0,1,0), "cm")) + 
-  scale_linetype_manual("", breaks = c("Counterfactual", "Truncated"), values=c(1,2)) + 
+  labs(title="With social vulnerability", x="Effect of exposure on \n probability of spontaneous abortion") +
+  theme(plot.title = element_text(hjust = 0.5, size=18), axis.text.x = element_text(size=16), 
+        axis.title.x=element_text(size=18),
+        axis.text.y = element_text(size=16), axis.title.y= element_text(size=18), 
+        strip.text.x = element_text(size = 18), 
+        legend.text = element_text(size=16), plot.margin = unit(c(1,0,1,0), "cm")) + 
+  scale_linetype_manual("", breaks = c("Counterfactual", "Truncated"), values=c(6,5)) + 
+  scale_fill_manual("", labels = c("Counterfactual", "Truncated"), values=c("#1a9850","#4575b4")) +
   
   geom_ribbon(aes(x = s_e, ymin=cf_rd_SV1 - 1.96*cf_rd_SE_SV1, ymax=cf_rd_SV1 + 1.96*cf_rd_SE_SV1), alpha=0.2) + 
   geom_ribbon(aes(x = s_e, ymin=trunc_rd_SV1 - 1.96*trunc_rd_SE_SV1, ymax=trunc_rd_SV1 + 1.96*trunc_rd_SE_SV1), alpha=0.2) + 
-  ylim(-0.012, 0.012)
+  scale_y_continuous("Preterm birth risk difference per 100 women",  labels=function(x) sprintf("%.1f", x*100), limits=c(-0.012, 0.012)) 
 
 
+p3a
 ggsave(p3a, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_susceptible_SV1_ra_1000_lb05.pdf"), width=10)
 
 
@@ -297,40 +308,40 @@ ggsave(p_ab, file=paste0("/Users/danagoin/Documents/Research projects/Left trunc
 
 
 p4 <- ggplot(surv_m) + 
-  geom_line(aes(x=s_e, y=cf_rd_SV0 - trunc_rd_SV0, linetype="Bias SV=0")) + 
-  geom_line(aes(x=s_e, y=cf_rd_SV1 - trunc_rd_SV1, linetype="Bias SV=1")) + 
+  geom_line(aes(x=s_e, y=cf_rd_SV0 - trunc_rd_SV0, linetype="Bias SV=0"), size=1.5) + 
+  geom_line(aes(x=s_e, y=cf_rd_SV1 - trunc_rd_SV1, linetype="Bias SV=1"), size=1.5) + 
   theme_bw() + 
   facet_wrap(~lb_e, labeller = labeller(lb_e = c("-0.05" ="Lengthen gestation time", "0" ="No effect on gestation time", "0.05"="Shorten gestation time"))) + 
   labs(title="Effect of exposure on \n time to live birth", 
        x="Effect of exposure on \n probability of spontaneous abortion",  
        y="Absolute bias") +
-  theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(size=14), 
-        axis.title.x=element_text(size=14),
-        axis.text.y = element_text(size=14), axis.title.y= element_text(size=14), 
-        strip.text.x = element_text(size = 14), 
-        legend.text = element_text(size=14)) + 
+  theme(plot.title = element_text(hjust = 0.5, size=18), axis.text.x = element_text(size=16), 
+        axis.title.x=element_text(size=18),
+        axis.text.y = element_text(size=16), axis.title.y= element_text(size=18), 
+        strip.text.x = element_text(size = 18), 
+        legend.text = element_text(size=16)) + 
   scale_linetype_manual("", breaks = c("Bias SV=0", "Bias SV=1"), labels=c("No social vulnerability","Social vulnerability"), values=c(1,2)) + 
   geom_hline(yintercept=0, linetype=3) + ylim(-0.0025, 0.005)
 
-
+p4
 ggsave(p4, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_susceptible_ra_bias_1000.pdf"), width=15)
 
 
 p4a <- ggplot(surv_m %>% filter(lb_e==0.05)) + 
-  geom_line(aes(x=s_e, y=cf_rd_SV0 - trunc_rd_SV0, linetype="No social vulnerability")) + 
-  geom_line(aes(x=s_e, y=cf_rd_SV1 - trunc_rd_SV1, linetype="Social vulnerability")) + 
+  geom_line(aes(x=s_e, y=cf_rd_SV0 - trunc_rd_SV0, linetype="Without social vulnerability"), size=1.5) + 
+  geom_line(aes(x=s_e, y=cf_rd_SV1 - trunc_rd_SV1, linetype="With social vulnerability"), size=1.5) + 
   theme_bw() + 
   labs(x="Effect of exposure on \n probability of spontaneous abortion",  
        y="Absolute bias") +
-  theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(size=14), 
-               axis.title.x=element_text(size=14),
-               axis.text.y = element_text(size=14), axis.title.y= element_text(size=14), 
-               strip.text.x = element_text(size = 14), 
-               legend.text = element_text(size=14)) + 
-  scale_linetype_manual("", breaks =c("No social vulnerability","Social vulnerability"), values=c(1,2)) + 
+  theme(plot.title = element_text(hjust = 0.5, size=18), axis.text.x = element_text(size=16), 
+               axis.title.x=element_text(size=18),
+               axis.text.y = element_text(size=16), axis.title.y= element_text(size=18), 
+               strip.text.x = element_text(size = 18), 
+               legend.text = element_text(size=16)) + 
+  scale_linetype_manual("", breaks =c("Without social vulnerability","With social vulnerability"), values=c(1,2)) + 
   geom_hline(yintercept=0, linetype=3) + ylim(-0.001, 0.004)
 
-
+p4a
 ggsave(p4a, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_susceptible_ra_bias_1000_lb05.pdf"), width=10)
 
 #-----------------------------------------------------------------------------------------------------------------
@@ -348,49 +359,52 @@ p1cov <-   ggplot(surv_m) +
   labs(title="Effect of exposure on \n time to live birth", 
        x="Effect of exposure on \n probability of spontaneous abortion",  
        y="95% CI coverage") +
-  theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(size=14), 
-        axis.title.x=element_text(size=14),
-        axis.text.y = element_text(size=14), axis.title.y= element_text(size=14), 
-        strip.text.x = element_text(size = 14), 
-        legend.text = element_text(size=14)) +
+  theme(plot.title = element_text(hjust = 0.5, size=18), axis.text.x = element_text(size=16), 
+        axis.title.x=element_text(size=18),
+        axis.text.y = element_text(size=16), axis.title.y= element_text(size=18), 
+        strip.text.x = element_text(size = 18), 
+        legend.text = element_text(size=16)) +
   scale_linetype_manual("", breaks = c("coverage"), values=c(1)) + 
   geom_hline(yintercept=0.95, linetype=3) + ylim(0, 1)
 
+p1cov
 ggsave(p1cov, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_susceptible_ra_cov95_1000.pdf"), width=15)
 
 
 p2cov <- ggplot(surv_m) + 
-  geom_line(aes(x=s_e, y=cov95_SV0, linetype="No social vulnerability")) + 
-  geom_line(aes(x=s_e, y=cov95_SV1, linetype="Social vulnerability")) + 
+  geom_line(aes(x=s_e, y=cov95_SV0, linetype="Without social vulnerability")) + 
+  geom_line(aes(x=s_e, y=cov95_SV1, linetype="With social vulnerability")) + 
   theme_bw() + 
   facet_wrap(~lb_e, labeller = labeller(lb_e = c("-0.05" ="Lengthen gestation time", "0" ="No effect on gestation time", "0.05"="Shorten gestation time"))) + 
   labs(title="Effect of exposure on \n time to live birth", 
        x="Effect of exposure on \n probability of spontaneous abortion",  
        y="Confidence interval coverage") +
-  theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(size=14), 
-        axis.title.x=element_text(size=14),
-        axis.text.y = element_text(size=14), axis.title.y= element_text(size=14), 
-        strip.text.x = element_text(size = 14), 
-        legend.text = element_text(size=14)) +
-  scale_linetype_manual("", breaks = c("No social vulnerability", "Social vulnerability"), values=c(1,2)) + 
+  theme(plot.title = element_text(hjust = 0.5, size=18), axis.text.x = element_text(size=16), 
+        axis.title.x=element_text(size=18),
+        axis.text.y = element_text(size=16), axis.title.y= element_text(size=18), 
+        strip.text.x = element_text(size = 18), 
+        legend.text = element_text(size=16)) +
+  scale_linetype_manual("", breaks = c("Without social vulnerability", "With social vulnerability"), values=c(1,2)) + 
   geom_hline(yintercept=0.95, linetype=3) + ylim(0, 1)
 
+p2cov
 ggsave(p2cov, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_susceptible_ra_cov95_SV_1000.pdf"), width=15)
 
 
 p2cov_a <- ggplot(surv_m %>% filter(lb_e==0.05)) + 
-  geom_line(aes(x=s_e, y=cov95_SV0, linetype="No social vulnerability")) + 
-  geom_line(aes(x=s_e, y=cov95_SV1, linetype="Social vulnerability")) + 
+  geom_line(aes(x=s_e, y=cov95_SV0, linetype="Without social vulnerability"), size=1.5) + 
+  geom_line(aes(x=s_e, y=cov95_SV1, linetype="With social vulnerability"), size=1.5) + 
   theme_bw() + 
   labs(x="Effect of exposure on \n probability of spontaneous abortion",  
        y="Confidence interval coverage") +
-  theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(size=14), 
-        axis.title.x=element_text(size=14),
-        axis.text.y = element_text(size=14), axis.title.y= element_text(size=14), 
-        strip.text.x = element_text(size = 14), 
-        legend.text = element_text(size=14)) + 
-  scale_linetype_manual("", breaks = c("No social vulnerability", "Social vulnerability"), values=c(1,2)) + 
-  geom_hline(yintercept=0.95, linetype=3) + ylim(0, 1)
+  theme(plot.title = element_text(hjust = 0.5, size=18), axis.text.x = element_text(size=16), 
+        axis.title.x=element_text(size=18),
+        axis.text.y = element_text(size=16), axis.title.y= element_text(size=18), 
+        strip.text.x = element_text(size = 18), 
+        legend.text = element_text(size=16)) + 
+  scale_linetype_manual("", breaks = c("Without social vulnerability", "With social vulnerability"), values=c(1,4)) + 
+  geom_hline(yintercept=0.95, linetype=3) + ylim(0.4, 1)
 
+p2cov_a
 ggsave(p2cov_a, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_susceptible_ra_cov95_SV_1000_lb05.pdf"), width=10)
 
