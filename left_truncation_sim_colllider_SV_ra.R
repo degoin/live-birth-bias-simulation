@@ -162,8 +162,7 @@ p1 <-   ggplot(surv_m) +
   theme_bw() + 
   facet_wrap(~lb_e, labeller = labeller(lb_e = c("-0.05" ="Lengthen gestation time", "0" ="No effect on gestation time", "0.05"="Shorten gestation time"))) + 
   labs(title="Effect of exposure on time to live birth", 
-       x="Effect of exposure on \n probability of spontaneous abortion",  
-       y="Preterm birth risk difference") +
+       x="Effect of exposure on \n probability of spontaneous abortion") +
   theme(plot.title = element_text(hjust = 0.5, size=18),  
         plot.margin = unit(c(1,1.5,1,1.5), "cm"), 
         axis.text.x = element_text(size=14), 
