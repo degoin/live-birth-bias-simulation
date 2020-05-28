@@ -130,10 +130,11 @@ p <- ggplot(surv_m) +
   facet_wrap(~lb_e, labeller = labeller(lb_e = c("-0.05" ="Lengthen gestation time", "0" ="No effect on gestation time", "0.05"="Shorten gestation time"))) + 
   labs(title="", 
        x="Effect of exposure on \n probability of spontaneous abortion") +
-  theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(size=10), axis.text.y = element_text(size=10), strip.text.x = element_text(size = 12)) + 
+  theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(size=14), axis.text.y = element_text(size=14),
+        axis.title.x = element_text(size=16), axis.title.y = element_text(size=16),  strip.text.x = element_text(size = 16)) + 
   scale_linetype_manual("", breaks = c("Full", "Truncated"), values=c(4,5)) + 
-  geom_ribbon(aes(x = s_e, ymin=full_rd - 1.96*full_rd_SE, ymax=full_rd + 1.96*full_rd_SE), alpha=0.4)  + 
-  geom_ribbon(aes(x = s_e, ymin=trunc_rd - 1.96*trunc_rd_SE, ymax=trunc_rd + 1.96*trunc_rd_SE), alpha=0.4)  + 
+ # geom_ribbon(aes(x = s_e, ymin=full_rd - 1.96*full_rd_SE, ymax=full_rd + 1.96*full_rd_SE), alpha=0.4)  + 
+#  geom_ribbon(aes(x = s_e, ymin=trunc_rd - 1.96*trunc_rd_SE, ymax=trunc_rd + 1.96*trunc_rd_SE), alpha=0.4)  + 
   geom_hline(yintercept=0, linetype=3) + scale_y_continuous("risk difference per 100 women", labels=function(x) sprintf("%.1f", x*100))
 
 
@@ -148,9 +149,9 @@ p2 <- ggplot(surv_m %>% filter(lb_e==0.05)) +
   labs(title="", 
        x="Effect of exposure on \n probability of spontaneous abortion") +
   theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(size=14), 
-        axis.title.x=element_text(size=14),
-        axis.text.y = element_text(size=14), axis.title.y= element_text(size=14), 
-        strip.text.x = element_text(size = 14), 
+        axis.title.x=element_text(size=16),
+        axis.text.y = element_text(size=14), axis.title.y= element_text(size=16), 
+        strip.text.x = element_text(size = 16), 
         legend.text = element_text(size=14)) + 
   scale_linetype_manual("", breaks = c("All conceptions", "Live births"), values=c(4,5))  + 
   geom_hline(yintercept=0, linetype=3) + scale_y_continuous("risk difference per 100 women",  labels=function(x) sprintf("%.1f", x*100))
