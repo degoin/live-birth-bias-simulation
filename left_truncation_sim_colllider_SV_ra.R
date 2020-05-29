@@ -148,10 +148,10 @@ return(r)
 # run simulation across values for spontaneous and live birth effects ------------------------------------------------------------------
 
 
-surv_ls <- lapply(seq(0, 0.2, by=0.05), function(y) 
+surv_ls <- lapply(seq(0, 0.2, by=0.01), function(y) 
                     lapply(seq(-0.05, 0.05, by=0.05), function(z) mc(n = 20, s_e = y, lb_e = z, u_s_e=0.2, u_lb_e=0.5, N=625000, superN=5000000)))
 
-surv_ls2 <- lapply(1:length(seq(0, 0.2, by=0.05)), function(x) do.call(rbind, surv_ls[[x]]))
+surv_ls2 <- lapply(1:length(seq(0, 0.2, by=0.01)), function(x) do.call(rbind, surv_ls[[x]]))
 
 surv_m  <- data.frame(do.call(rbind, surv_ls2))
 
