@@ -15,62 +15,77 @@ library(tidyverse)
 #source("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/scripts/left_truncation_sim_superpop.R")
 
 # define simulation function ------------------------------------------------------------------
-surv_sim <- function(iteration, s_e, lb_e, N) {
+surv_sim <- function(iteration, s_e, lb_e, N, superN) {
   print(paste0("s_e =",s_e," lb_e = ",lb_e)) 
   print(iteration)
   
-  #truth <- surv_sim_superpop(s_e, lb_e, 500000)
-  
   # generate exposure and SV factor
-  dat <- data.frame(SV = rbinom(n=N, size=1, prob=0.5))
-  dat$A <- rbinom(n=N, size=1, prob= 0.1 + 0.25*dat$SV)
+  fulldat <- data.frame(SV = rbinom(n=superN, size=1, prob=0.5))
+  fulldat$A <- rbinom(n=superN, size=1, prob= 0.1 + 0.25*dat$SV)
   
   # generate suceptibles 
-  dat$susceptible <- rbinom(n=N, size=1, prob=0.3)
+  fulldat$susceptible <- rbinom(n=superN, size=1, prob=0.2)
   
   # generate underlying risk of SA 
-  dat$sa_risk <- rnorm(n=N, mean=0.3, sd = 0.05)
-  dat$sa_risk <- ifelse(dat$sa_risk<0, 0.01, ifelse(dat$sa_risk>1, 0.99, dat$sa_risk))
+  fulldat$sa_risk <- rnorm(n=superN, mean=0.2, sd = 0.05)
+  fulldat$sa_risk <- ifelse(fulldat$sa_risk<0, 0.01, ifelse(fulldat$sa_risk>1, 0.99, fulldat$sa_risk))
   
   # generate spont time 
-  dat$spont_time <- 5 + rweibull(N,shape=1.5,scale=0.5)*10
+  fulldat$spont_time <- 5 + rweibull(superN,shape=1.5,scale=0.5)*10
   
 
   # identify spontaneous abortions 
   # only those who are both exposed and susceptible have excess risk of SA due to exposure
-  dat$spont <- ifelse(dat$A==1 & dat$susceptible==1, rbinom(n=N, size=1, prob = dat$sa_risk + s_e), 
-                      rbinom(n=N, size=1, prob = dat$sa_risk))
+  fulldat$spont <- ifelse(fulldat$A==1 & fulldat$susceptible==1, rbinom(n=superN, size=1, prob = fulldat$sa_risk + s_e), 
+                      rbinom(n=superN, size=1, prob = fulldat$sa_risk))
   
   
 
   # generate underlying live birth time 
-  dat$lb_time_u <- ifelse(dat$SV==1, 42.5 - rweibull(N,shape=1.75,scale=1.2)*3, 43 - rweibull(N,shape=1.75,scale=1.2)*3)
+  fulldat$lb_time_u <- ifelse(fulldat$SV==1, 42.5 - rweibull(superN,shape=1.75,scale=1.2)*3, 43 - rweibull(superN,shape=1.75,scale=1.2)*3)
   
 
   # generate underlying live birth time 
   # those who are susceptible have 1/2 week substracted from their underlying gestational age 
-  dat$lb_time <- ifelse(dat$A==1 & dat$susceptible==0, dat$lb_time_u - lb_e, 
-                        ifelse(dat$A==1 & dat$susceptible==1, dat$lb_time_u - lb_e - 0.5, 
-                        ifelse(dat$A==0 & dat$susceptible==1, dat$lb_time_u - 0.5, dat$lb_time_u)))
+  fulldat$lb_time <- ifelse(fulldat$A==1 & fulldat$susceptible==0, fulldat$lb_time_u - lb_e, 
+                        ifelse(fulldat$A==1 & fulldat$susceptible==1, fulldat$lb_time_u - lb_e - 0.5, 
+                        ifelse(fulldat$A==0 & fulldat$susceptible==1, fulldat$lb_time_u - 0.5, fulldat$lb_time_u)))
   
   # if live birth time is less than 21 weeks, recode to 21 weeks
-  dat$lb_time <- ifelse(dat$lb_time<21, 21, dat$lb_time)
+  fulldat$lb_time <- ifelse(fulldat$lb_time<21, 21, fulldat$lb_time)
   
   
-  dat$time <- ifelse(dat$spont==1, dat$spont_time, dat$lb_time)
+  fulldat$time <- ifelse(fulldat$spont==1, fulldat$spont_time, fulldat$lb_time)
   
-  dat$event_type <- ifelse(dat$spont==1, "spontaneous abortion","live birth")
+  fulldat$event_type <- ifelse(fulldat$spont==1, "spontaneous abortion","live birth")
   
-  dat$event <- ifelse((dat$time<37 & dat$event_type=="live birth") | dat$spont==1, 1,0)
+  fulldat$event <- ifelse((fulldat$time<37 & fulldat$event_type=="live birth") | fulldat$spont==1, 1,0)
   
   
   # identify preterm births  
-  dat$ptb <- ifelse(dat$event==1 & dat$event_type=="live birth", 1, 
-                    ifelse(dat$event_type=="spontaneous abortion", NA, 0))
+  fulldat$ptb <- ifelse(fulldat$event==1 & fulldat$event_type=="live birth", 1, 
+                    ifelse(fulldat$event_type=="spontaneous abortion", NA, 0))
   
   
   # identify those who would have delivered preterm regarless of whether they experienced a spontaneous abortion 
-  dat$cf_ptb <- ifelse(dat$lb_time<37,1,0)
+  fulldat$cf_ptb <- ifelse(fulldat$lb_time<37,1,0) 
+  
+  
+  # additive effect of exposure on preterm birth if spontaneous abortions had not occurred 
+  c_truth <- glm(cf_ptb ~ A + SV , data = fulldat)
+  
+  # stratify by social vulnerability factor 
+  
+  # additive effect of exposure on preterm birth if spontaneous abortions had not occurred 
+  c_truth_SV0 <- glm(cf_ptb ~ A, data = fulldat[fulldat$SV==0,])
+  c_truth_SV1 <- glm(cf_ptb ~ A, data = fulldat[fulldat$SV==1,])
+  
+  
+  # now take sample 
+  
+  dat <- fulldat[sample(nrow(fulldat), size=N, replace = F),]
+  
+  # and calculate effects 
   
   # additive effect of exposure on spontaneous abortion or preterm birth 
   rd_ffit <- glm(event ~ A + SV, data=dat)
@@ -98,8 +113,8 @@ surv_sim <- function(iteration, s_e, lb_e, N) {
   results <- data.frame(cbind(full_rd = coef(rd_ffit)["A"], full_rd_SE = coef(summary(rd_ffit))["A","Std. Error"], 
                               cf_rd = coef(rd_cffit)["A"], cf_rd_SE = coef(summary(rd_cffit))["A","Std. Error"],
                               trunc_rd = coef(rd_tfit)["A"], trunc_rd_SE = coef(summary(rd_tfit))["A", "Std. Error"], 
-                              cov95 = ifelse(coef(rd_tfit)["A"] - 1.96*coef(summary(rd_tfit))["A", "Std. Error"] <= coef(rd_cffit)["A"] & 
-                                               coef(rd_tfit)["A"] + 1.96*coef(summary(rd_tfit))["A", "Std. Error"] >=coef(rd_cffit)["A"], 1, 0),
+                              cov95 = ifelse(coef(rd_tfit)["A"] - 1.96*coef(summary(rd_tfit))["A", "Std. Error"] <= coef(c_truth)["A"] & 
+                                               coef(rd_tfit)["A"] + 1.96*coef(summary(rd_tfit))["A", "Std. Error"] >=coef(c_truth)["A"], 1, 0),
                               
                               full_rd_SV0 = coef(rd_ffit_SV0)["A"], full_rd_SE_SV0 = coef(summary(rd_ffit_SV0))["A","Std. Error"], 
                               full_rd_SV1 = coef(rd_ffit_SV1)["A"], full_rd_SE_SV1 = coef(summary(rd_ffit_SV1))["A","Std. Error"], 
@@ -108,17 +123,21 @@ surv_sim <- function(iteration, s_e, lb_e, N) {
                               cf_rd_SV1 = coef(rd_cffit_SV1)["A"], cf_rd_SE_SV1 = coef(summary(rd_cffit_SV1))["A","Std. Error"],
                               
                               trunc_rd_SV0 = coef(rd_tfit_SV0)["A"], trunc_rd_SE_SV0 = coef(summary(rd_tfit_SV0))["A", "Std. Error"],
-                              trunc_rd_SV1 = coef(rd_tfit_SV1)["A"], trunc_rd_SE_SV1 = coef(summary(rd_tfit_SV1))["A", "Std. Error"],
+                              trunc_rd_SV1 = coef(rd_tfit_SV1)["A"], trunc_rd_SE_SV1 = coef(summary(rd_tfit_SV1))["A", "Std. Error"], 
                               
-                              cov95_SV0 = ifelse(coef(rd_tfit_SV0)["A"] - 1.96*coef(summary(rd_tfit_SV0))["A", "Std. Error"] <= coef(rd_cffit_SV0)["A"] & 
-                                                   coef(rd_tfit_SV0)["A"] + 1.96*coef(summary(rd_tfit_SV0))["A", "Std. Error"] >=coef(rd_cffit_SV0)["A"], 1, 0),
+                              cov95_SV0 = ifelse(coef(rd_tfit_SV0)["A"] - 1.96*coef(summary(rd_tfit_SV0))["A", "Std. Error"] <= coef(c_truth_SV0)["A"] & 
+                                                   coef(rd_tfit_SV0)["A"] + 1.96*coef(summary(rd_tfit_SV0))["A", "Std. Error"] >=coef(c_truth_SV0)["A"], 1, 0),
                               
-                              cov95_SV1 = ifelse(coef(rd_tfit_SV1)["A"] - 1.96*coef(summary(rd_tfit_SV1))["A", "Std. Error"] <= coef(rd_cffit_SV1)["A"] & 
-                                                   coef(rd_tfit_SV1)["A"] + 1.96*coef(summary(rd_tfit_SV1))["A", "Std. Error"] >=coef(rd_cffit_SV1)["A"], 1, 0),
+                              cov95_SV1 = ifelse(coef(rd_tfit_SV1)["A"] - 1.96*coef(summary(rd_tfit_SV1))["A", "Std. Error"] <= coef(c_truth_SV1)["A"] & 
+                                                   coef(rd_tfit_SV1)["A"] + 1.96*coef(summary(rd_tfit_SV1))["A", "Std. Error"] >=coef(c_truth_SV1)["A"], 1, 0),
                               
-                              s_e = s_e, lb_e=lb_e))
+                              s_e = s_e, lb_e=lb_e, u_s_e=u_s_e, u_lb_e = u_lb_e, mean_ptb = mean(dat$ptb[dat$event_type=="live birth"]), 
+                              mean_sa = mean(dat$spont), mean_A_all = mean(dat$A), mean_A_lb = mean(dat$A[dat$event_type=="live birth"]), 
+                              mean_SV_all = mean(dat$SV), mean_SV_lb = mean(dat$SV[dat$event_type=="live birth"])))
   
-return(results) 
+  
+  return(results) 
+
 }
 
 # effect on probability of induced abortion range from 0 to 0.005 by 0.001
