@@ -193,7 +193,7 @@ p1 <-   ggplot(surv_m) +
   geom_line(aes(x=s_e, y=trunc_rd, linetype="Truncated"), size=1.5)  + 
   scale_y_continuous("Preterm birth risk difference per 100 women",  labels=function(x) sprintf("%.1f", x*100), limits=c(-0.012, 0.012))
 p1
-ggsave(p1, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_collider_SV_ra_1000.pdf"), width=15)
+ggsave(p1, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/SFig1_sim_plot_collider_SV_ra_1000_v2.pdf"), width=15)
 
 
 p2a <- ggplot(surv_m %>% filter(lb_e==0.05)) + 
@@ -217,7 +217,7 @@ p2a <- ggplot(surv_m %>% filter(lb_e==0.05)) +
 
 p2a
 
-ggsave(p2a, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_collider_SV0_ra_1000_lb05.pdf"), width=10)
+ggsave(p2a, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_collider_SV0_ra_1000_lb05_v2.pdf"), width=10)
 
 
 p3a <- ggplot(surv_m %>% filter(lb_e == 0.05)) + 
@@ -241,12 +241,12 @@ p3a <- ggplot(surv_m %>% filter(lb_e == 0.05)) +
 
 
 p3a
-ggsave(p3a, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_collider_SV1_ra_1000_lb05.pdf"), width=10)
+ggsave(p3a, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_collider_SV1_ra_1000_lb05_v2.pdf"), width=10)
 
 
 p_ab <- grid.arrange(p2a, p3a, nrow=1)
-
-ggsave(p_ab, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_collider_SV_ra_1000_lb05.pdf"), width=15)
+p_ab
+ggsave(p_ab, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/Fig4_sim_plot_collider_SV_ra_1000_lb05_v2.pdf"), width=20)
 
 
 p4 <- ggplot(surv_m) + 
@@ -264,10 +264,10 @@ p4 <- ggplot(surv_m) +
         strip.text.x = element_text(size = 18), 
         legend.text = element_text(size=16)) +
   scale_linetype_manual("", breaks = c("Without social vulnerability", "With social vulnerability"), labels=c("Without social vulnerability","With social vulnerability"), values=c(1,4)) + 
-  geom_hline(yintercept=0, linetype=3) + ylim(-0.0025, 0.005)
+  geom_hline(yintercept=0, linetype=3) + ylim(-0.0005, 0.001)
 
 p4
-ggsave(p4, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_collider_ra_bias_1000.pdf"), width=15)
+ggsave(p4, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/SFig2_sim_plot_collider_ra_bias_1000_v2.pdf"), width=15)
 
 
 p4a <- ggplot(surv_m %>% filter(lb_e==0.05)) + 
@@ -283,10 +283,10 @@ p4a <- ggplot(surv_m %>% filter(lb_e==0.05)) +
         strip.text.x = element_text(size = 18), 
         legend.text = element_text(size=16)) + 
   scale_linetype_manual("", breaks =c("Without social vulnerability","With social vulnerability"), values=c(1,4)) + 
-  geom_hline(yintercept=0, linetype=3) + ylim(-0.001, 0.002)
+  geom_hline(yintercept=0, linetype=3) + ylim(-0.0005, 0.001)
 
 p4a
-ggsave(p4a, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_collider_ra_bias_1000_lb05.pdf"), width=10)
+ggsave(p4a, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/Fig5_sim_plot_collider_ra_bias_1000_lb05_v2.pdf"), width=15)
 
 #-----------------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------
@@ -314,7 +314,7 @@ p1cov <-   ggplot(surv_m) +
   geom_hline(yintercept=0.95, linetype=3) + ylim(0.8, 1)
 
 p1cov
-ggsave(p1cov, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_collider_ra_cov95_1000.pdf"), width=15)
+ggsave(p1cov, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_collider_ra_cov95_1000_v2.pdf"), width=15)
 
 
 p2cov <- ggplot(surv_m) + 
@@ -336,7 +336,7 @@ p2cov <- ggplot(surv_m) +
   geom_hline(yintercept=0.95, linetype=3) + ylim(0.8, 1)
 
 p2cov
-ggsave(p2cov, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_collider_ra_cov95_SV_1000.pdf"), width=15)
+ggsave(p2cov, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/SFig3_sim_plot_collider_ra_cov95_SV_1000_v2.pdf"), width=15)
 
 
 p2cov_a <- ggplot(surv_m %>% filter(lb_e==0.05)) + 
@@ -352,9 +352,9 @@ p2cov_a <- ggplot(surv_m %>% filter(lb_e==0.05)) +
         strip.text.x = element_text(size = 18), 
         legend.text = element_text(size=16))  + 
   scale_linetype_manual("", breaks = c("Without social vulnerability", "With social vulnerability"), values=c(1,4)) + 
-  geom_hline(yintercept=0.95, linetype=3) + ylim(0.8, 1)
-
-ggsave(p2cov_a, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/sim_plot_collider_ra_cov95_SV_1000_lb05.pdf"), width=10)
+  geom_hline(yintercept=0.95, linetype=3) + ylim(0.85, 1)
+p2cov_a
+ggsave(p2cov_a, file=paste0("/Users/danagoin/Documents/Research projects/Left truncation of birth cohorts simulation study/results/plots/Fig6_sim_plot_collider_ra_cov95_SV_1000_lb05_v2.pdf"), width=15)
 
 
     
